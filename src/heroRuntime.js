@@ -26,10 +26,21 @@ const apply=()=>{
 
 const style=document.createElement('style');
 style.textContent=`
-.realPhotoCard{position:absolute;right:-24px;bottom:18px;width:245px;background:#fff;border:5px solid #fff;border-radius:16px;overflow:hidden;box-shadow:0 20px 45px #23352d2c;z-index:5}.realPhotoImage{height:145px;background-size:cover;background-position:center;background-repeat:no-repeat}.realPhotoCopy{padding:12px 14px 14px}.realPhotoCopy b,.realPhotoCopy span{display:block}.realPhotoCopy b{font-size:12px;color:#6f8d3a;margin-bottom:5px}.realPhotoCopy span{font-size:11px;line-height:1.4;color:#68736f}
-.heroFrame,.miniFrame{background-repeat:no-repeat;background-size:cover}.heroFrame > img,.miniFrame > img{opacity:0!important}
-@media(max-width:900px){.realPhotoCard{right:-2px;bottom:12px;width:215px}.realPhotoImage{height:125px}}
-@media(max-width:560px){.realPhotoCard{width:170px;bottom:8px}.realPhotoImage{height:95px}.realPhotoCopy{padding:9px 10px}.realPhotoCopy b{font-size:10px}.realPhotoCopy span{font-size:9px}}
+.heroVisual{overflow:visible}
+.heroFrame{width:500px;height:540px;border-radius:22px;margin-right:70px}
+.heroFrame img{object-position:center top}
+.miniFrame{width:285px;height:215px;right:-105px;top:48px;bottom:auto;border-radius:16px;background-color:#fff;z-index:6}
+.miniShade{display:none}
+.miniCaption{left:0;right:0;bottom:0;background:#fff;color:#14221f;padding:12px 15px;height:72px}
+.miniCaption b{color:#6f8d3a;font-size:12px}.miniCaption span{color:#68736f;font-size:10px}
+.miniFrame>a{top:42%;width:48px;height:48px}
+.cardTop{top:8px;right:-105px;max-width:285px;padding:15px 18px;border-radius:14px;z-index:7}
+.cardBottom{display:none}
+.realPhotoCard{position:absolute;right:-105px;bottom:20px;width:285px;background:#fff;border:5px solid #fff;border-radius:16px;overflow:hidden;box-shadow:0 20px 45px #23352d2c;z-index:6}.realPhotoImage{height:145px;background-size:cover;background-position:center;background-repeat:no-repeat}.realPhotoCopy{padding:12px 15px 15px}.realPhotoCopy b,.realPhotoCopy span{display:block}.realPhotoCopy b{font-size:12px;color:#6f8d3a;margin-bottom:5px}.realPhotoCopy span{font-size:11px;line-height:1.4;color:#68736f}
+.heroFrame > img,.miniFrame > img{opacity:0!important}
+@media(max-width:1100px){.heroFrame{margin-right:35px}.miniFrame,.cardTop,.realPhotoCard{right:-40px}}
+@media(max-width:900px){.heroFrame{width:min(100%,600px);height:470px;margin-right:0}.miniFrame{right:-4px;top:auto;bottom:2px;width:220px;height:180px}.cardTop{right:0;top:20px}.realPhotoCard{right:0;bottom:12px;width:220px}.realPhotoImage{height:120px}}
+@media(max-width:560px){.heroFrame{height:350px}.miniFrame{width:155px;height:145px}.miniCaption{height:58px;padding:8px 10px}.miniCaption b{font-size:9px}.miniCaption span{font-size:8px}.cardTop{display:none}.realPhotoCard{width:165px;bottom:8px}.realPhotoImage{height:85px}.realPhotoCopy{padding:8px 10px}.realPhotoCopy b{font-size:10px}.realPhotoCopy span{font-size:9px}}
 `;
 document.head.appendChild(style);
 
