@@ -96,10 +96,11 @@ const style=document.createElement('style');
 style.textContent=`
 .heroVisual{overflow:visible!important;height:600px!important;display:block!important;position:relative!important;padding-right:330px!important}
 .heroFrame{position:absolute!important;left:0!important;top:30px!important;width:500px!important;height:590px!important;margin:0!important;border-radius:20px!important;overflow:hidden!important;background:#d8d4c9!important}
-.heroFrame>img{opacity:0!important;display:block!important;visibility:visible!important;width:100%!important;height:100%!important}
+.heroFrame>img{opacity:1!important;display:block!important;visibility:visible!important;width:100%!important;height:100%!important;object-fit:cover!important}
 .heroFrame .imageShade{display:none!important}.heroFrame .heroPlay{display:none!important}.heroCaption{display:none!important}
 .referenceCard{position:absolute!important;width:285px!important;height:170px!important;right:0!important;background:#fff!important;border:5px solid #fff!important;border-radius:16px!important;overflow:hidden!important;box-shadow:0 16px 40px rgba(35,53,45,.14)!important;z-index:6!important}
 .referenceCardOne{top:58px!important;bottom:auto!important}.referenceCardTwo{top:247px!important}.referenceCardThree{top:436px!important}
+.referenceCard>img{opacity:1!important;display:block!important;visibility:visible!important;width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important}
 .referenceCard .refCardImage{height:112px!important;background-size:cover!important;background-position:center!important;background-repeat:no-repeat!important}.referenceCard .refCardCopy{height:58px!important;padding:9px 12px!important;background:#fff!important}
 .referenceCard .refCardCopy strong{display:block!important;font-size:12px!important;color:#17241f!important;margin-bottom:3px!important;font-weight:700!important}.referenceCard .refCardCopy span{display:block!important;font-size:10px!important;line-height:1.35!important;color:#68736f!important}
 .referenceCardOne .miniCaption{position:absolute!important;left:0!important;right:0!important;bottom:0!important;height:58px!important;padding:9px 12px!important;background:#fff!important;color:#14221f!important}.referenceCardOne .miniCaption b{display:block!important;color:#17241f!important;font-size:12px!important;margin-bottom:3px!important}.referenceCardOne .miniCaption span{display:block!important;color:#68736f!important;font-size:10px!important;line-height:1.35!important}
@@ -109,5 +110,6 @@ style.textContent=`
 @media(max-width:560px){.heroVisual{height:430px!important;padding-right:105px!important}.heroFrame{width:calc(100% - 88px)!important;height:400px!important}.referenceCard{width:140px!important;height:122px!important;border-width:3px!important}.referenceCard .refCardImage{height:74px!important}.referenceCard .refCardCopy{height:45px!important;padding:6px 7px!important}.referenceCard .refCardCopy strong{font-size:9px!important}.referenceCard .refCardCopy span{font-size:8px!important}.referenceCardOne{top:15px!important}.referenceCardTwo{top:145px!important}.referenceCardThree{top:275px!important}}
 `;
 document.head.appendChild(style);
-window.setTimeout(apply,0);
+const run=()=>{apply();window.setTimeout(apply,50);window.setTimeout(apply,250);window.setTimeout(apply,1000);};
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true});else run();
 window.addEventListener('load',apply,{once:true});
