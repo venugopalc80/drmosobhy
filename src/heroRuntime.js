@@ -1,6 +1,6 @@
 import {image1,image2,image3} from './heroImages.js';
 
-const paint=(el,url,position='center')=>{
+const setBg=(el,url,position='center')=>{
   if(!el)return;
   el.style.backgroundImage=`url("${url}")`;
   el.style.backgroundSize='cover';
@@ -10,38 +10,136 @@ const paint=(el,url,position='center')=>{
   if(img){img.style.opacity='0';img.style.pointerEvents='none';}
 };
 
+const makeCard=(className,image,label,title,text)=>{
+  const card=document.createElement('div');
+  card.className=className;
+  card.innerHTML=`<div class="refCardImage"></div><div class="refCardCopy"><b>${label}</b><strong>${title}</strong><span>${text}</span></div>`;
+  const photo=card.querySelector('.refCardImage');
+  photo.style.backgroundImage=`url("${image}")`;
+  return card;
+};
+
 const apply=()=>{
-  document.querySelectorAll('.heroFrame').forEach(el=>paint(el,image1,'center top'));
-  document.querySelectorAll('.miniFrame').forEach(el=>paint(el,image2,'center center'));
-  document.querySelectorAll('.aboutVisual').forEach(el=>paint(el,image1,'center top'));
-  document.querySelectorAll('.avatars img').forEach((img,i)=>{img.src=i===0?image1:image3;img.style.objectFit='cover';});
   const visual=document.querySelector('.heroVisual');
-  if(visual && !visual.querySelector('.realPhotoCard')){
-    const card=document.createElement('div');
-    card.className='realPhotoCard';
-    card.innerHTML='<div class="realPhotoImage"></div><div class="realPhotoCopy"><b>Academy community</b><span>Learn, practise and grow together.</span></div>';
-    card.querySelector('.realPhotoImage').style.backgroundImage=`url("${image3}")`;
+  if(!visual)return;
+
+  const frame=visual.querySelector('.heroFrame');
+  setBg(frame,image1,'center top');
+
+  // The reference hero uses three compact image-led cards stacked beside the founder image.
+  const mini=visual.querySelector('.miniFrame');
+  if(mini){
+    setBg(mini,image2,'center center');
+    mini.classList.add('referenceCard','referenceCardOne');
+    const oldCaption=mini.querySelector('.miniCaption');
+    if(oldCaption)oldCaption.innerHTML='<b>PLAB 2 focused</b><span>Clinical, practical & communication preparation</span>';
+    const shade=mini.querySelector('.miniShade');
+    if(shade)shade.style.display='none';
+    const play=mini.querySelector('a');
+    if(play)play.style.display='none';
+  }
+
+  const oldTop=visual.querySelector('.cardTop');
+  if(oldTop)oldTop.style.display='none';
+  const oldBottom=visual.querySelector('.cardBottom');
+  if(oldBottom)oldBottom.style.display='none';
+
+  if(!visual.querySelector('.referenceCardTwo')){
+    const card=makeCard('referenceCard referenceCardTwo',image2,'','Practise with confidence.','Realistic stations and expert feedback.');
     visual.appendChild(card);
   }
+  if(!visual.querySelector('.realPhotoCard')){
+    const card=makeCard('realPhotoCard referenceCard referenceCardThree',image3,'','Academy community','Learn, practise and grow together.');
+    visual.appendChild(card);
+  }else{
+    const card=visual.querySelector('.realPhotoCard');
+    card.classList.add('referenceCard','referenceCardThree');
+    const copy=card.querySelector('.realPhotoCopy');
+    if(copy)copy.innerHTML='<b>Academy community</b><span>Learn, practise and grow together.</span>';
+    const photo=card.querySelector('.realPhotoImage');
+    if(photo)photo.style.backgroundImage=`url("${image3}")`;
+  }
+
+  document.querySelectorAll('.avatars img').forEach((img,i)=>{
+    img.src=i===0?image1:(i===1?image2:image3);
+    img.style.objectFit='cover';
+  });
 };
 
 const style=document.createElement('style');
 style.textContent=`
-.heroVisual{overflow:visible}
-.heroFrame{width:500px;height:540px;border-radius:22px;margin-right:70px}
+/* Supplied-photo reference hero */
+.hero{padding-bottom:42px}
+.hero .wrap{width:min(1490px,calc(100% - 100px))}
+.heroGrid{grid-template-columns:minmax(500px,.92fr) minmax(650px,1.08fr);gap:30px;min-height:650px}
+.heroCopy{padding:52px 0 32px}
+.hero h1{max-width:650px;font-size:clamp(58px,5.25vw,78px);line-height:.96}
+.heroVisual{height:600px;position:relative;overflow:visible;display:block;padding-right:330px}
+.heroFrame{position:absolute;left:0;top:30px;width:500px;height:590px;margin:0;border-radius:20px;overflow:hidden;background:#d8d4c9;box-shadow:0 28px 70px #23352d25;border:1px solid rgba(255,255,255,.9)}
 .heroFrame img{object-position:center top}
-.miniFrame{width:285px;height:215px;right:-105px;top:48px;bottom:auto;border-radius:16px;background-color:#fff;z-index:6}
-.miniShade{display:none}
-.miniCaption{left:0;right:0;bottom:0;background:#fff;color:#14221f;padding:12px 15px;height:72px}
-.miniCaption b{color:#6f8d3a;font-size:12px}.miniCaption span{color:#68736f;font-size:10px}
-.miniFrame>a{top:42%;width:48px;height:48px}
-.cardTop{top:8px;right:-105px;max-width:285px;padding:15px 18px;border-radius:14px;z-index:7}
-.cardBottom{display:none}
-.realPhotoCard{position:absolute;right:-105px;bottom:20px;width:285px;background:#fff;border:5px solid #fff;border-radius:16px;overflow:hidden;box-shadow:0 20px 45px #23352d2c;z-index:6}.realPhotoImage{height:145px;background-size:cover;background-position:center;background-repeat:no-repeat}.realPhotoCopy{padding:12px 15px 15px}.realPhotoCopy b,.realPhotoCopy span{display:block}.realPhotoCopy b{font-size:12px;color:#6f8d3a;margin-bottom:5px}.realPhotoCopy span{font-size:11px;line-height:1.4;color:#68736f}
-.heroFrame > img,.miniFrame > img,.aboutVisual > img{opacity:0!important}
-@media(max-width:1100px){.heroFrame{margin-right:35px}.miniFrame,.cardTop,.realPhotoCard{right:-40px}}
-@media(max-width:900px){.heroFrame{width:min(100%,600px);height:470px;margin-right:0}.miniFrame{right:-4px;top:auto;bottom:2px;width:220px;height:180px}.cardTop{right:0;top:20px}.realPhotoCard{right:0;bottom:12px;width:220px}.realPhotoImage{height:120px}}
-@media(max-width:560px){.heroFrame{height:350px}.miniFrame{width:155px;height:145px}.miniCaption{height:58px;padding:8px 10px}.miniCaption b{font-size:9px}.miniCaption span{font-size:8px}.cardTop{display:none}.realPhotoCard{width:165px;bottom:8px}.realPhotoImage{height:85px}.realPhotoCopy{padding:8px 10px}.realPhotoCopy b{font-size:10px}.realPhotoCopy span{font-size:9px}}
+.imageShade{background:linear-gradient(180deg,rgba(9,24,20,.02) 50%,rgba(9,24,20,.9) 100%)}
+.heroPlay{width:72px;height:72px;top:48%;box-shadow:0 14px 30px #14221f2d}
+.heroCaption{left:28px;right:28px;bottom:24px}
+.heroCaption strong{font-size:25px}
+.heroCaption small{font-size:12px}
+.referenceCard{position:absolute;width:285px;height:170px;right:0;background:#fff;border:5px solid #fff;border-radius:16px;overflow:hidden;box-shadow:0 16px 40px #23352d22;z-index:6}
+.referenceCardOne{top:58px;bottom:auto}
+.referenceCardTwo{top:247px}
+.referenceCardThree{top:436px;bottom:auto}
+.referenceCard .refCardImage{height:112px;background-size:cover;background-position:center;background-repeat:no-repeat}
+.referenceCard .refCardCopy{height:58px;padding:9px 12px;background:#fff}
+.referenceCard .refCardCopy b{display:none}
+.referenceCard .refCardCopy strong{display:block;font-size:12px;color:#17241f;margin-bottom:3px;font-weight:700}
+.referenceCard .refCardCopy span{display:block;font-size:10px;line-height:1.35;color:#68736f}
+.referenceCardOne .miniCaption{position:absolute;left:0;right:0;bottom:0;height:58px;padding:9px 12px;background:#fff;color:#14221f}
+.referenceCardOne .miniCaption b{display:block;color:#14221f;font-size:12px;margin-bottom:3px}
+.referenceCardOne .miniCaption span{display:block;color:#68736f;font-size:10px;line-height:1.35}
+.referenceCardOne img{opacity:0!important}
+.realPhotoCard{position:absolute;right:0;top:436px;bottom:auto;width:285px;height:170px;background:#fff;border:5px solid #fff;border-radius:16px;overflow:hidden;box-shadow:0 16px 40px #23352d22;z-index:6}
+.realPhotoImage{height:112px;background-size:cover;background-position:center;background-repeat:no-repeat}
+.realPhotoCopy{height:58px;padding:9px 12px;background:#fff}
+.realPhotoCopy b{display:block;font-size:12px;color:#17241f;margin-bottom:3px}
+.realPhotoCopy span{display:block;font-size:10px;line-height:1.35;color:#68736f}
+.realPhotoCard.referenceCardThree{top:436px}
+.heroBenefits{width:min(1490px,calc(100% - 100px));margin-top:0}
+@media(max-width:1250px){
+ .hero .wrap,.heroBenefits{width:min(1180px,calc(100% - 60px))}
+ .heroGrid{grid-template-columns:1fr 1fr;gap:10px}
+ .heroVisual{padding-right:255px}
+ .heroFrame{width:430px;height:560px}
+ .referenceCard{width:235px;height:155px}
+ .referenceCard .refCardImage,.realPhotoImage{height:100px}
+ .referenceCard .refCardCopy,.realPhotoCopy{height:55px;padding:8px 10px}
+ .referenceCardOne{top:65px}.referenceCardTwo{top:235px}.referenceCardThree,.realPhotoCard.referenceCardThree{top:405px}
+}
+@media(max-width:900px){
+ .hero .wrap,.heroBenefits{width:calc(100% - 40px)}
+ .heroGrid{grid-template-columns:1fr;min-height:auto}
+ .heroCopy{padding-bottom:10px}
+ .heroVisual{height:530px;padding-right:190px}
+ .heroFrame{width:calc(100% - 160px);height:500px;left:0;top:10px}
+ .referenceCard{width:200px;height:145px}
+ .referenceCard .refCardImage,.realPhotoImage{height:91px}
+ .referenceCard .refCardCopy,.realPhotoCopy{height:49px;padding:7px 9px}
+ .referenceCardOne{right:0;top:20px}.referenceCardTwo{right:0;top:178px}.referenceCardThree,.realPhotoCard.referenceCardThree{right:0;top:336px}
+ .heroBenefits{grid-template-columns:1fr 1fr}
+ .heroBenefits>div:nth-child(3){border-left:0}
+}
+@media(max-width:560px){
+ .hero .wrap,.heroBenefits{width:calc(100% - 28px)}
+ .hero h1{font-size:48px}
+ .heroVisual{height:430px;padding-right:105px}
+ .heroFrame{width:calc(100% - 88px);height:400px}
+ .referenceCard{width:140px;height:122px;border-width:3px;border-radius:12px}
+ .referenceCard .refCardImage,.realPhotoImage{height:74px}
+ .referenceCard .refCardCopy,.realPhotoCopy{height:45px;padding:6px 7px}
+ .referenceCard .refCardCopy strong,.referenceCardOne .miniCaption b,.realPhotoCopy b{font-size:9px}
+ .referenceCard .refCardCopy span,.referenceCardOne .miniCaption span,.realPhotoCopy span{font-size:8px}
+ .referenceCardOne{top:15px}.referenceCardTwo{top:145px}.referenceCardThree,.realPhotoCard.referenceCardThree{top:275px}
+ .heroBenefits{grid-template-columns:1fr}
+ .heroBenefits>div{border-left:0!important;border-top:1px solid #dfe2d8;padding:14px}
+ .heroBenefits>div:first-child{border-top:0}
+}
 `;
 document.head.appendChild(style);
 
