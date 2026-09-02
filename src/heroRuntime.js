@@ -96,6 +96,6 @@ style.textContent=`
 `;
 document.head.appendChild(style);
 
-const observer=new MutationObserver(apply);
-observer.observe(document.documentElement,{childList:true,subtree:true});
-apply();
+// main.jsx renders first; apply once after React has committed the DOM.
+window.setTimeout(apply,0);
+window.addEventListener('load',apply,{once:true});
