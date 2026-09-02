@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { createRoot } from 'react';
 import { ArrowRight, Play, CheckCircle2, BookOpen, Stethoscope, Menu, X, MapPin, MessageCircle, ClipboardCheck, ExternalLink, Send } from 'lucide-react';
 import './styles.css';
 
