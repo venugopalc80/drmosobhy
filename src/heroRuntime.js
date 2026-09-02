@@ -13,6 +13,7 @@ const paint=(el,url,position='center')=>{
 const apply=()=>{
   document.querySelectorAll('.heroFrame').forEach(el=>paint(el,image1,'center top'));
   document.querySelectorAll('.miniFrame').forEach(el=>paint(el,image2,'center center'));
+  document.querySelectorAll('.aboutVisual').forEach(el=>paint(el,image1,'center top'));
   document.querySelectorAll('.avatars img').forEach((img,i)=>{img.src=i===0?image1:image3;img.style.objectFit='cover';});
   const visual=document.querySelector('.heroVisual');
   if(visual && !visual.querySelector('.realPhotoCard')){
@@ -37,7 +38,7 @@ style.textContent=`
 .cardTop{top:8px;right:-105px;max-width:285px;padding:15px 18px;border-radius:14px;z-index:7}
 .cardBottom{display:none}
 .realPhotoCard{position:absolute;right:-105px;bottom:20px;width:285px;background:#fff;border:5px solid #fff;border-radius:16px;overflow:hidden;box-shadow:0 20px 45px #23352d2c;z-index:6}.realPhotoImage{height:145px;background-size:cover;background-position:center;background-repeat:no-repeat}.realPhotoCopy{padding:12px 15px 15px}.realPhotoCopy b,.realPhotoCopy span{display:block}.realPhotoCopy b{font-size:12px;color:#6f8d3a;margin-bottom:5px}.realPhotoCopy span{font-size:11px;line-height:1.4;color:#68736f}
-.heroFrame > img,.miniFrame > img{opacity:0!important}
+.heroFrame > img,.miniFrame > img,.aboutVisual > img{opacity:0!important}
 @media(max-width:1100px){.heroFrame{margin-right:35px}.miniFrame,.cardTop,.realPhotoCard{right:-40px}}
 @media(max-width:900px){.heroFrame{width:min(100%,600px);height:470px;margin-right:0}.miniFrame{right:-4px;top:auto;bottom:2px;width:220px;height:180px}.cardTop{right:0;top:20px}.realPhotoCard{right:0;bottom:12px;width:220px}.realPhotoImage{height:120px}}
 @media(max-width:560px){.heroFrame{height:350px}.miniFrame{width:155px;height:145px}.miniCaption{height:58px;padding:8px 10px}.miniCaption b{font-size:9px}.miniCaption span{font-size:8px}.cardTop{display:none}.realPhotoCard{width:165px;bottom:8px}.realPhotoImage{height:85px}.realPhotoCopy{padding:8px 10px}.realPhotoCopy b{font-size:10px}.realPhotoCopy span{font-size:9px}}
