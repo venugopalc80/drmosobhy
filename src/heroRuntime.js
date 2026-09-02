@@ -1,23 +1,36 @@
 import {image1,image2,image3} from './heroImages.js';
 
+const paint=(el,url,position='center')=>{
+  if(!el)return;
+  el.style.backgroundImage=`url("${url}")`;
+  el.style.backgroundSize='cover';
+  el.style.backgroundPosition=position;
+  el.style.backgroundRepeat='no-repeat';
+  const img=el.querySelector(':scope > img');
+  if(img){img.style.opacity='0';img.style.pointerEvents='none';}
+};
+
 const apply=()=>{
-  document.querySelectorAll('.heroFrame img').forEach(img=>{img.src=image1; img.alt='Dr Mo Sobhy — Academy founder';});
-  document.querySelectorAll('.miniFrame img').forEach(img=>{img.src=image2; img.alt='PLAB 2 practice with Dr Mo Sobhy';});
-  const avatars=document.querySelectorAll('.avatars img');
-  if(avatars[0]) avatars[0].src=image1;
-  if(avatars[1]) avatars[1].src=image3;
+  document.querySelectorAll('.heroFrame').forEach(el=>paint(el,image1,'center top'));
+  document.querySelectorAll('.miniFrame').forEach(el=>paint(el,image2,'center center'));
+  document.querySelectorAll('.avatars img').forEach((img,i)=>{img.src=i===0?image1:image3;img.style.objectFit='cover';});
   const visual=document.querySelector('.heroVisual');
   if(visual && !visual.querySelector('.realPhotoCard')){
     const card=document.createElement('div');
     card.className='realPhotoCard';
-    card.innerHTML='<img alt="Dr Mo Sobhy with Academy candidates"><div><b>Academy community</b><span>Learn, practise and grow together.</span></div>';
-    card.querySelector('img').src=image3;
+    card.innerHTML='<div class="realPhotoImage"></div><div class="realPhotoCopy"><b>Academy community</b><span>Learn, practise and grow together.</span></div>';
+    card.querySelector('.realPhotoImage').style.backgroundImage=`url("${image3}")`;
     visual.appendChild(card);
   }
 };
 
 const style=document.createElement('style');
-style.textContent=`.realPhotoCard{position:absolute;right:-28px;top:255px;width:190px;background:#fff;border:5px solid #fff;border-radius:16px;overflow:hidden;box-shadow:0 18px 42px #23352d2c;z-index:4}.realPhotoCard img{width:100%;height:115px;object-fit:cover;display:block}.realPhotoCard div{padding:10px 12px 12px}.realPhotoCard b,.realPhotoCard span{display:block}.realPhotoCard b{font-size:11px;color:#6f8d3a;margin-bottom:4px}.realPhotoCard span{font-size:10px;line-height:1.35;color:#68736f}@media(max-width:900px){.realPhotoCard{right:0;top:245px}}@media(max-width:560px){.realPhotoCard{width:145px;top:220px;right:0}.realPhotoCard img{height:85px}}`;
+style.textContent=`
+.realPhotoCard{position:absolute;right:-24px;bottom:18px;width:245px;background:#fff;border:5px solid #fff;border-radius:16px;overflow:hidden;box-shadow:0 20px 45px #23352d2c;z-index:5}.realPhotoImage{height:145px;background-size:cover;background-position:center;background-repeat:no-repeat}.realPhotoCopy{padding:12px 14px 14px}.realPhotoCopy b,.realPhotoCopy span{display:block}.realPhotoCopy b{font-size:12px;color:#6f8d3a;margin-bottom:5px}.realPhotoCopy span{font-size:11px;line-height:1.4;color:#68736f}
+.heroFrame,.miniFrame{background-repeat:no-repeat;background-size:cover}.heroFrame > img,.miniFrame > img{opacity:0!important}
+@media(max-width:900px){.realPhotoCard{right:-2px;bottom:12px;width:215px}.realPhotoImage{height:125px}}
+@media(max-width:560px){.realPhotoCard{width:170px;bottom:8px}.realPhotoImage{height:95px}.realPhotoCopy{padding:9px 10px}.realPhotoCopy b{font-size:10px}.realPhotoCopy span{font-size:9px}}
+`;
 document.head.appendChild(style);
 
 const observer=new MutationObserver(apply);
