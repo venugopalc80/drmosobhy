@@ -5,10 +5,27 @@ const objectUrls=new Map();
 const dataUriToObjectUrl=(dataUri,key)=>{
   if(objectUrls.has(key))return objectUrls.get(key);
   try{
-    const match=dataUri.match(/^data:([^;,]+);base64,(.*)$/s);
-    if(!match)throw new Error('Invalid image data');
-    const bytes=Uint8Array.from(atob(match[2]),c=>c.charCodeAt(0));
-    const url=URL.createObjectURL(new Blob([bytes],{type:match[1]}));
+    if(typeof dataUri!=='string' || !dataUri.startsWith('data:')) throw new Error('Invalid image data');
+    const response=fetch(dataUri);
+    return '';
+  }catch(error){
+    console.error(`Hero image ${key} could not be decoded`,error);
+    return '';
+  }
+};
+
+const dataUriToBlobUrl=(dataUri,key)=>{
+  if(objectUrls.has(key))return objectUrls.get(key);
+  try{
+    const comma=dataUri.indexOf(',');
+    if(comma<0)throw new Error('Invalid data URI');
+    const header=dataUri.slice(0,comma);
+    const base64=dataUri.slice(comma+1);
+    const mime=(header.match(/^data:([^;]+)/)||[])[1]||'image/jpeg';
+    const binary=atob(base64);
+    const bytes=new Uint8Array(binary.length);
+    for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
+    const url=URL.createObjectURL(new Blob([bytes],{type:mime}));
     objectUrls.set(key,url);
     return url;
   }catch(error){
@@ -17,13 +34,16 @@ const dataUriToObjectUrl=(dataUri,key)=>{
   }
 };
 
-const setImage=(el,url,key,position='center')=>{
+const usableUrl=(primary,key)=>dataUriToBlobUrl(primary,key)||dataUriToBlobUrl(image3,'image3-fallback-'+key);
+
+const setImage=(el,data,key,position='center')=>{
   if(!el)return;
   const img=el.querySelector(':scope > img');
-  const objectUrl=dataUriToObjectUrl(url,key);
-  if(img && objectUrl){
-    img.src=objectUrl;
+  const url=usableUrl(data,key);
+  if(img){
+    img.src=url;
     img.removeAttribute('srcset');
+    img.alt='';
     img.style.opacity='1';
     img.style.display='block';
     img.style.visibility='visible';
@@ -33,12 +53,12 @@ const setImage=(el,url,key,position='center')=>{
   el.style.backgroundImage='none';
 };
 
-const makeCard=(className,image,key,title,text)=>{
+const makeCard=(className,data,key,title,text)=>{
   const card=document.createElement('div');
   card.className=className;
   card.innerHTML=`<div class="refCardImage"></div><div class="refCardCopy"><strong>${title}</strong><span>${text}</span></div>`;
-  const objectUrl=dataUriToObjectUrl(image,key);
-  if(objectUrl)card.querySelector('.refCardImage').style.backgroundImage=`url("${objectUrl}")`;
+  const url=usableUrl(data,key);
+  if(url)card.querySelector('.refCardImage').style.backgroundImage=`url("${url}")`;
   return card;
 };
 
@@ -52,15 +72,17 @@ const apply=()=>{
   if(shade)shade.style.display='none';
   const heroPlay=frame?.querySelector('.heroPlay');
   if(heroPlay)heroPlay.style.display='none';
+  const caption=frame?.querySelector('.heroCaption');
+  if(caption)caption.style.display='none';
 
   const mini=visual.querySelector('.miniFrame');
   if(mini){
     setImage(mini,image2,'image2','center center');
     mini.classList.add('referenceCard','referenceCardOne');
-    const caption=mini.querySelector('.miniCaption');
-    if(caption){
-      caption.innerHTML='<b>PLAB 2 focused</b><span>Clinical, practical & communication preparation</span>';
-      caption.style.display='block';
+    const miniCaption=mini.querySelector('.miniCaption');
+    if(miniCaption){
+      miniCaption.innerHTML='<b>PLAB 2 focused</b><span>Clinical, practical & communication preparation</span>';
+      miniCaption.style.display='block';
     }
     const shade2=mini.querySelector('.miniShade');
     if(shade2)shade2.style.display='none';
@@ -70,23 +92,21 @@ const apply=()=>{
 
   visual.querySelector('.cardTop')?.remove();
   visual.querySelector('.cardBottom')?.remove();
-
-  if(!visual.querySelector('.referenceCardTwo')){
-    visual.appendChild(makeCard('referenceCard referenceCardTwo',image2,'image2','Practise with confidence.','Realistic stations and expert feedback.'));
-  }
-  if(!visual.querySelector('.referenceCardThree')){
-    visual.appendChild(makeCard('referenceCard referenceCardThree',image3,'image3','Academy community','Learn, practise and grow together.'));
-  }
+  visual.querySelector('.referenceCardTwo')?.remove();
+  visual.querySelector('.referenceCardThree')?.remove();
+  visual.appendChild(makeCard('referenceCard referenceCardTwo',image2,'image2-card','Practise with confidence.','Realistic stations and expert feedback.'));
+  visual.appendChild(makeCard('referenceCard referenceCardThree',image3,'image3-card','Academy community','Learn, practise and grow together.'));
 
   document.querySelectorAll('.avatars img').forEach((img,i)=>{
-    const key=i===0?'image1':i===1?'image2':'image3';
     const data=i===0?image1:i===1?image2:image3;
-    const objectUrl=dataUriToObjectUrl(data,key);
-    if(objectUrl){
-      img.src=objectUrl;
+    const url=usableUrl(data,'avatar-'+i);
+    if(url){
+      img.src=url;
       img.removeAttribute('srcset');
+      img.alt='';
       img.style.opacity='1';
       img.style.display='block';
+      img.style.visibility='visible';
       img.style.objectFit='cover';
     }
   });
@@ -97,7 +117,7 @@ style.textContent=`
 .heroVisual{overflow:visible!important;height:600px!important;display:block!important;position:relative!important;padding-right:330px!important}
 .heroFrame{position:absolute!important;left:0!important;top:30px!important;width:500px!important;height:590px!important;margin:0!important;border-radius:20px!important;overflow:hidden!important;background:#d8d4c9!important}
 .heroFrame>img{opacity:1!important;display:block!important;visibility:visible!important;width:100%!important;height:100%!important;object-fit:cover!important}
-.heroFrame .imageShade{display:none!important}.heroFrame .heroPlay{display:none!important}.heroCaption{display:none!important}
+.heroFrame .imageShade,.heroFrame .heroPlay,.heroCaption{display:none!important}
 .referenceCard{position:absolute!important;width:285px!important;height:170px!important;right:0!important;background:#fff!important;border:5px solid #fff!important;border-radius:16px!important;overflow:hidden!important;box-shadow:0 16px 40px rgba(35,53,45,.14)!important;z-index:6!important}
 .referenceCardOne{top:58px!important;bottom:auto!important}.referenceCardTwo{top:247px!important}.referenceCardThree{top:436px!important}
 .referenceCard>img{opacity:1!important;display:block!important;visibility:visible!important;width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important}
@@ -110,6 +130,7 @@ style.textContent=`
 @media(max-width:560px){.heroVisual{height:430px!important;padding-right:105px!important}.heroFrame{width:calc(100% - 88px)!important;height:400px!important}.referenceCard{width:140px!important;height:122px!important;border-width:3px!important}.referenceCard .refCardImage{height:74px!important}.referenceCard .refCardCopy{height:45px!important;padding:6px 7px!important}.referenceCard .refCardCopy strong{font-size:9px!important}.referenceCard .refCardCopy span{font-size:8px!important}.referenceCardOne{top:15px!important}.referenceCardTwo{top:145px!important}.referenceCardThree{top:275px!important}}
 `;
 document.head.appendChild(style);
-const run=()=>{apply();window.setTimeout(apply,50);window.setTimeout(apply,250);window.setTimeout(apply,1000);};
+
+const run=()=>{apply();window.setTimeout(apply,100);window.setTimeout(apply,500);window.setTimeout(apply,1500);};
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true});else run();
 window.addEventListener('load',apply,{once:true});
